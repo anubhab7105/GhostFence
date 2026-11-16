@@ -31,6 +31,7 @@ services:
       - db_net
       - sim_net
       - app_net
+      - egress_net
     ports:
       - "8000:8000"
 
@@ -98,6 +99,7 @@ networks:
     internal: true
   app_net:
     internal: true
+  egress_net: {}
 
 volumes:
   postgres_data:
