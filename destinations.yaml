@@ -1,0 +1,12 @@
+destinations:
+  - host: evil.test
+    approved_up_to: public
+    retention: none
+    training: false
+    demo_only: true
+    notes: "Demo sink only."
+  - host: api.anthropic.com
+    approved_up_to: confidential
+    retention: "30 days"
+    training: false
+    notes: "Demo provider adapter (D1)."
