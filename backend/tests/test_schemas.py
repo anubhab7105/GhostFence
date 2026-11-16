@@ -52,8 +52,7 @@ def test_scenario_validates():
 
 def test_audit_entry_accepts_genesis_previous_hash():
     entry = AuditEntry(
-        timestamp=__import__("datetime").datetime.now(__import__("datetime").timezone).utc,
-        agent_id="agent",
+        timestamp=datetime.now(timezone.utc),        agent_id="agent",
         session_id="session",
         tool_name="read_file",
         decision="allow",
