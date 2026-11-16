@@ -9,6 +9,8 @@ from app.schemas.common import Sensitivity
 from app.schemas.destinations import DestinationCatalogue
 from app.schemas.policy import Policy
 from app.schemas.resources import ResourceCatalogue
+from datetime import datetime, timezone
+
 from app.schemas.scenario import Scenario
 from app.schemas.tool_registry import ToolRegistry
 
