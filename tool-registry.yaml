@@ -1,0 +1,77 @@
+tools:
+  - name: read_file
+    description: "Read a file from the resource catalogue."
+    input_schema:
+      type: object
+      properties:
+        path:
+          type: string
+      required: [path]
+    side_effect: false
+    egress: false
+  - name: fetch_document
+    description: "Fetch an untrusted vendor document."
+    input_schema:
+      type: object
+      properties:
+        url:
+          type: string
+      required: [url]
+    side_effect: false
+    egress: true
+  - name: http_request
+    description: "Make an outbound HTTP request."
+    input_schema:
+      type: object
+      properties:
+        url:
+          type: string
+        method:
+          type: string
+      required: [url]
+    side_effect: true
+    egress: true
+  - name: send_email
+    description: "Send an email."
+    input_schema:
+      type: object
+      properties:
+        to:
+          type: string
+        subject:
+          type: string
+        body:
+          type: string
+      required: [to, subject, body]
+    side_effect: true
+    egress: true
+  - name: delete_record
+    description: "Delete a record."
+    input_schema:
+      type: object
+      properties:
+        record_id:
+          type: string
+      required: [record_id]
+    side_effect: true
+    requires_approval: true
+  - name: transfer_money
+    description: "Transfer money."
+    input_schema:
+      type: object
+      properties:
+        amount:
+          type: number
+        destination:
+          type: string
+      required: [amount, destination]
+    side_effect: true
+  - name: export_customers
+    description: "Export customer records."
+    input_schema:
+      type: object
+      properties:
+        format:
+          type: string
+      required: [format]
+    side_effect: true
