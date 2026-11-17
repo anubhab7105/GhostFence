@@ -52,13 +52,14 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
             return await _block(req, token, run, "schema_validation_failed", 0, policy_engine.version)
 
     session_tainted = is_tainted(req.session_id)
+    inspector_severity = __import__("app.gateway.runs", fromlist=["get_inspector_severity"]).get_inspector_severity(req.session_id)
 
     # 3-6 policy evaluation
     result = policy_engine.evaluate(
         tool_name=req.tool_name,
         arguments=req.arguments,
         session_tainted=session_tainted,
-        inspector_severity=0,
+        inspector_severity=inspector_severity,
     )
     decision = result["decision"]
     reason_code = result["reason_code"]

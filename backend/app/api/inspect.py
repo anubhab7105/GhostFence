@@ -26,4 +26,6 @@ def inspect_content(req: InspectRequest, role: str = Depends(api_key_role), toke
     tainted = severity >= 25
     if tainted:
         set_tainted(token["session_id"], True, findings)
+    from ..gateway.runs import set_inspector_severity
+    set_inspector_severity(token["session_id"], severity)
     return InspectResponse(severity=severity, findings=findings, evidence_hash=evidence, tainted=tainted)

@@ -88,6 +88,20 @@ def is_tainted(session_id: str) -> bool:
         return bool(row)
 
 
+def get_inspector_severity(session_id: str) -> int:
+    with get_session() as session:
+        row = session.execute(text("SELECT inspector_severity FROM sessions WHERE id = :id"), {"id": session_id}).scalar()
+        return int(row or 0)
+
+
+def set_inspector_severity(session_id: str, severity: int):
+    with session_scope() as session:
+        session.execute(
+            text("UPDATE sessions SET inspector_severity = GREATEST(inspector_severity, :s) WHERE id = :id"),
+            {"s": severity, "id": session_id},
+        )
+
+
 def get_sensitivity_high_water(session_id: str) -> str:
     with get_session() as session:
         row = session.execute(text("SELECT sensitivity_high_water FROM sessions WHERE id = :id"), {"id": session_id}).scalar()
