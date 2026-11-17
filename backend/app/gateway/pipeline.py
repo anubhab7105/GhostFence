@@ -10,7 +10,7 @@ from ..audit.service import append_entry, evidence_hash
 from ..core.settings import settings
 from ..gateway.egress import EgressClient
 from ..gateway.executor import execute_tool
-from ..gateway.runs import get_run, increment_denial, is_tainted, set_tainted
+from ..gateway.runs import get_inspector_severity, get_run, increment_denial, is_tainted, set_tainted
 from ..schemas.api import ExecuteRequest, ExecuteResponse
 from ..schemas.common import Decision
 
@@ -52,7 +52,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
             return await _block(req, token, run, "schema_validation_failed", 0, policy_engine.version)
 
     session_tainted = is_tainted(req.session_id)
-    inspector_severity = __import__("app.gateway.runs", fromlist=["get_inspector_severity"]).get_inspector_severity(req.session_id)
+    inspector_severity = get_inspector_severity(req.session_id)
 
     # 3-6 policy evaluation
     result = policy_engine.evaluate(
@@ -66,6 +66,16 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
     risk_score = result["risk_score"]
     policy_version = policy_engine.version
     matched = result["matched_rules"]
+
+    # allow_with_flag impact matrix (FR-64): never on outbound/destructive operations.
+    if decision == "allow" and risk_score > 0:
+        tool = registry.get(req.tool_name)
+        if tool is not None and (tool.egress or tool.side_effect):
+            decision = "require_approval"
+            reason_code = "risk_escalation_outbound"
+        else:
+            decision = "allow_with_flag"
+            reason_code = "allowed_with_flag"
 
     request_id = str(uuid.uuid4())
 
