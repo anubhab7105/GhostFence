@@ -3,7 +3,9 @@
 from fastapi import APIRouter, Depends
 
 from ..api.deps import api_key_role
-from ..attack_lab.runner import run_scenario
+def _run_scenario():
+    from ..attack_lab.runner import run_scenario
+    return run_scenario
 
 router = APIRouter(prefix="/v1/attacks", tags=["attacks"])
 
@@ -12,6 +14,7 @@ router = APIRouter(prefix="/v1/attacks", tags=["attacks"])
 async def run_attack(payload: dict, role: str = Depends(api_key_role)):
     scenario_id = payload.get("scenario_id", "s1")
     mode = payload.get("mode", "protected")
+    run_scenario = _run_scenario()
     return await run_scenario(scenario_id, mode)
 
 
