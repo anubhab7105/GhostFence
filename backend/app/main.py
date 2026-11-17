@@ -66,6 +66,7 @@ def health():
     return {"status": "ok", "service": "ghostfence", "db": db_ok}
 
 
+app.include_router(approvals_router)
 app.include_router(attacks_router)
 app.include_router(policies_router)
 app.include_router(runs_router)
