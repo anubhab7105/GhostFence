@@ -62,6 +62,7 @@ def test_allow_with_flag_matrix():
     class Tool:
         egress = True
         side_effect = True
+        input_schema = {}
     app_state["registry"] = SimpleNamespace(get=lambda name: Tool())
     try:
         run = create_run("invoice-agent", "matrix", {"mode": "enforce"})
