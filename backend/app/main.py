@@ -5,7 +5,10 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 import yaml
+import asyncio
+
 from fastapi import Depends, FastAPI, Header, HTTPException
+from fastapi.responses import StreamingResponse
 
 from .api.deps import run_token_payload
 from .core.security import role_for_api_key
@@ -63,6 +66,7 @@ def health():
 
 
 app.include_router(attacks_router)
+app.include_router(policies_router)
 app.include_router(runs_router)
 app.include_router(inspect_router)
 app.include_router(llm_router)
@@ -78,6 +82,15 @@ async def execute_endpoint(req: ExecuteRequest, token: dict = Depends(run_token_
 @app.get("/v1/audit")
 def audit_list():
     return {"entries": []}
+
+
+@app.get("/v1/stream")
+async def stream():
+    async def event_generator():
+        while True:
+            yield "data: {\"status\":\"ok\"}\n\n"
+            await asyncio.sleep(15)
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 
 @app.post("/v1/audit/verify")
