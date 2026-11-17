@@ -134,9 +134,18 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
             policy_version=policy_version,
         )
 
-    # D6: sensitivity high-water mark updated when result returned (ingress). Phase 3 will classify.
-    # For now, if tool result contains restricted markers, taint session.
-    # (placeholder)
+    # Write the separate outcome entry after execution (write-ahead audit).
+    append_entry(
+        agent_id=req.agent_id,
+        session_id=req.session_id,
+        tool_name=req.tool_name,
+        decision="outcome",
+        reason_code="completed",
+        risk_score=risk_score,
+        policy_version=policy_version,
+        evidence_hashes=[],
+        payload={"request_id": request_id, "result_keys": sorted(list(outcome.keys()))},
+    )
 
     response = ExecuteResponse(
         request_id=request_id,
