@@ -8,6 +8,7 @@ from jsonschema import ValidationError, validate as jsonschema_validate
 
 from ..audit.service import append_entry, evidence_hash
 from ..core.settings import settings
+from ..core.settings import settings
 from ..gateway.egress import EgressClient
 from ..gateway.executor import execute_tool
 from ..data_protection.scanner import scan_outbound
@@ -105,7 +106,6 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
             if "@" in to:
                 dest_host = to.split("@", 1)[1]
         if dest_host is not None:
-            from ..core.settings import settings
             allowed_hosts = {d.host for d in app_state["destinations"].destinations}
             scan = scan_outbound(
                 __import__("json").dumps(req.arguments, sort_keys=True),
