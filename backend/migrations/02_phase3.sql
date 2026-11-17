@@ -1,0 +1,5 @@
+ALTER TABLE sessions ADD COLUMN IF NOT EXISTS sensitivity_high_water TEXT NOT NULL DEFAULT 'public';
+ALTER TABLE sessions ADD COLUMN IF NOT EXISTS trust_state TEXT NOT NULL DEFAULT 'trusted';
+ALTER TABLE sessions ADD COLUMN IF NOT EXISTS inspector_severity INTEGER NOT NULL DEFAULT 0;
+
+GRANT SELECT, INSERT, UPDATE ON sessions TO gf_gateway;

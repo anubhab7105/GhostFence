@@ -1,0 +1,17 @@
+destinations:
+  - host: evil.test
+    approved_up_to: public
+    retention: none
+    training: false
+    demo_only: true
+    notes: "Demo sink only."
+  - host: vendor-site
+    approved_up_to: internal
+    retention: none
+    training: false
+    notes: "Mock vendor site for attack lab."
+  - host: api.anthropic.com
+    approved_up_to: confidential
+    retention: "30 days"
+    training: false
+    notes: "Demo provider adapter (D1)."

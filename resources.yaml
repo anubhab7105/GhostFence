@@ -1,0 +1,13 @@
+resources:
+  - id: invoices/invoice-1.pdf
+    pattern: "invoices/*"
+    classification: confidential
+    owner: finance
+  - id: payroll.csv
+    pattern: "restricted/payroll.csv"
+    classification: restricted
+    owner: hr
+  - id: q3_report.md
+    pattern: "docs/q3_report.md"
+    classification: confidential
+    owner: finance

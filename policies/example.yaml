@@ -1,0 +1,18 @@
+policy_id: invoice-agent
+version: "1.0"
+agent_id: invoice-agent
+default_decision: block
+allowed_tools:
+  - read_file
+  - fetch_document
+allowed_resources:
+  - invoices/*
+allowed_operations:
+  - read
+allowed_destinations: []
+sensitivity_ceiling: confidential
+approval_required:
+  - delete_record
+  - transfer_money
+  - export_customers
+notes: "Invoice agent may read invoices but may not transfer money or export customers."

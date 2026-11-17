@@ -1,0 +1,109 @@
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ghostfence}
+      POSTGRES_USER: ${POSTGRES_USER:-gf_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me-admin}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/migrations:/docker-entrypoint-initdb.d:ro
+    networks:
+      - db_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-gf_admin} -d ${POSTGRES_DB:-ghostfence}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  gateway:
+    build:
+      context: ./backend
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://${GATEWAY_DB_USER:-gf_gateway}:${GATEWAY_DB_PASSWORD:-change-me-gateway}@postgres:5432/${POSTGRES_DB:-ghostfence}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - agent_net
+      - db_net
+      - sim_net
+      - app_net
+      - egress_net
+    ports:
+      - "8000:8000"
+
+  checkpointer:
+    build:
+      context: ./backend
+    command: ["python", "-m", "app.checkpointer.service"]
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://${CHECKPOINTER_DB_USER:-gf_checkpointer}:${CHECKPOINTER_DB_PASSWORD:-change-me-checkpointer}@postgres:5432/${POSTGRES_DB:-ghostfence}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - db_net
+    volumes:
+      - checkpointer_data:/var/lib/ghostfence/checkpoints
+
+  sink:
+    build:
+      context: ./mocks/sink
+    networks:
+      sim_net:
+        aliases:
+          - evil.test
+          - reports.internal.test
+          - reports.internal.test.evil.test
+    ports:
+      - "8090:8080"
+
+  vendor-site:
+    build:
+      context: ./mocks/vendor-site
+    networks:
+      - sim_net
+    ports:
+      - "8091:8080"
+
+  dashboard:
+    build:
+      context: ./frontend
+    environment:
+      NEXT_PUBLIC_GATEWAY_URL: http://localhost:8000
+    depends_on:
+      - gateway
+    networks:
+      - app_net
+    ports:
+      - "3000:3000"
+
+  agent:
+    build:
+      context: ./sdk/python
+    command: ["sleep", "infinity"]
+    environment:
+      GHOSTFENCE_GATEWAY_URL: http://gateway:8000
+      GHOSTFENCE_AGENT_API_KEY: ${GHOSTFENCE_AGENT_API_KEY:-dev-agent-key}
+    depends_on:
+      - gateway
+    networks:
+      - agent_net
+
+networks:
+  agent_net:
+    internal: true
+  db_net:
+    internal: true
+  sim_net:
+    internal: true
+  app_net:
+    internal: true
+  egress_net: {}
+
+volumes:
+  postgres_data:
+  checkpointer_data:
