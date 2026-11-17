@@ -175,7 +175,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
             session_id=req.session_id,
             tool_name=req.tool_name,
             decision="outcome_unknown",
-            reason_code="execution_error",
+            reason_code=reason,
             risk_score=risk_score,
             policy_version=policy_version,
             evidence_hashes=[],
