@@ -74,7 +74,7 @@ app.include_router(inspect_router)
 app.include_router(llm_router)
 
 
-@app.post("/v1/execute")
+@app.post("/v1/execute", response_model_exclude_none=True)
 async def execute_endpoint(req: ExecuteRequest, token: dict = Depends(run_token_payload)):
     from .schemas.api import ExecuteRequest
 

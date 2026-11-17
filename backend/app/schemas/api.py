@@ -21,8 +21,8 @@ class ExecuteResponse(BaseModel):
     request_id: str
     decision: Decision
     reason_code: str
-    risk_score: int = 0
-    policy_version: str
+    risk_score: int | None = None
+    policy_version: str | None = None
     approval_id: str | None = None
     result: dict | None = None
 
