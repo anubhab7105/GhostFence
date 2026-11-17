@@ -72,4 +72,3 @@ def audit_list():
 @app.post("/v1/audit/verify")
 def audit_verify():
     return verify_chain()
-PY
