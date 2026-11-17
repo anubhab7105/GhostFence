@@ -12,6 +12,7 @@ from .core.security import role_for_api_key
 from .api.attacks import router as attacks_router
 from .api.inspect import router as inspect_router
 from .api.llm import router as llm_router
+from .api.policies import router as policies_router
 from .api.runs import router as runs_router
 from .audit.recovery import recover_pending_outcomes
 from .audit.service import append_entry, verify_chain
