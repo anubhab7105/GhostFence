@@ -7,6 +7,12 @@ import uuid
 
 import httpx
 
+from ..main import app_state
+from ..policy_engine.loaders import load_destinations, load_policy, load_registry, load_resources
+from ..core.settings import settings
+from ..gateway.egress import EgressClient
+from ..policy_engine.engine import PolicyEngine
+
 from ..core.security import verify_run_token
 from ..gateway.pipeline import execute_request
 from ..gateway.runs import create_run
@@ -14,6 +20,22 @@ from ..schemas.api import ExecuteRequest
 
 SINK_URL = os.getenv("SINK_URL", "http://sink:8080")
 VENDOR_URL = os.getenv("VENDOR_SITE_URL", "http://vendor-site:8080")
+
+
+def ensure_app_state():
+    if app_state:
+        return
+    registry = load_registry(settings.tool_registry_path)
+    policy = load_policy(settings.policy_path)
+    resources = load_resources(settings.resources_path)
+    destinations = load_destinations(settings.destinations_path)
+    engine = PolicyEngine(policy, registry, resources, destinations)
+    engine.validate_startup()
+    app_state["registry"] = registry
+    app_state["policy_engine"] = engine
+    app_state["resources"] = resources
+    app_state["destinations"] = destinations
+    app_state["egress"] = EgressClient()
 
 
 def _sink_count() -> int:
@@ -47,6 +69,7 @@ def _finish_attack_run(attack_id: str, summary: dict):
 
 
 async def run_scenario(scenario_id: str, mode: str) -> dict:
+    ensure_app_state()
     enforcement_mode = "enforce" if mode == "protected" else "log_only"
     run = create_run("invoice-agent", f"Attack scenario {scenario_id}", {"scenario_id": scenario_id, "mode": enforcement_mode})
     token = run["run_token"]
