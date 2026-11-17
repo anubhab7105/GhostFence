@@ -40,6 +40,7 @@ def test_allow_with_flag_not_on_outbound():
 
 
 def test_unknown_resource_restricted():
+    from app.schemas.common import Sensitivity
     from app.schemas.resources import ResourceCatalogue
     c = ResourceCatalogue(resources=[])
-    assert c.classify("anything") .value if hasattr(c.classify("anything"), "value") else c.classify("anything") == "restricted"
+    assert c.classify("anything") == Sensitivity.restricted

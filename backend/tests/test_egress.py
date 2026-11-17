@@ -46,6 +46,19 @@ def test_redirect_not_followed():
     assert "Location" in response.headers
 
 
+def test_pinning_uses_resolved_ip():
+    seen = {}
+
+    def handler(request):
+        seen["host"] = request.url.host
+        return httpx.Response(200, text="ok")
+
+    transport = httpx.MockTransport(handler)
+    client = EgressClient(resolver=lambda host: ["203.0.113.9"], transport=transport, demo_allow=False)
+    asyncio.run(client.request("GET", "http://example.com/pinned"))
+    assert seen["host"] == "203.0.113.9"
+
+
 def test_demo_host_allowed():
     def handler(request):
         return httpx.Response(200, text="sink")
