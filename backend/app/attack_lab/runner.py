@@ -133,3 +133,11 @@ async def run_scenario(scenario_id: str, mode: str) -> dict:
     }
     _finish_attack_run(attack_id, summary)
     return {"attack_id": attack_id, "summary": summary}
+
+def cross_check(summary: dict) -> bool:
+    """FR-30: decision records must agree with the attacker sink."""
+    sink_exposed = int(summary.get("sink_exposed_requests", 0))
+    decisions = [s.get("decision") for s in summary.get("timeline", [])]
+    if sink_exposed > 0 and not any(d in {"allow", "allow_with_flag"} for d in decisions):
+        return False
+    return True
