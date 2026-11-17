@@ -148,28 +148,101 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
     if decision in {"block"}:
         count = increment_denial(run["id"])
         if count >= settings.denial_threshold:
-            # run terminated
             pass
+        # log_only mode records the would-be decision but executes (D3).
+        if mode == "log_only":
+            try:
+                outcome = await execute_tool(req.tool_name, req.arguments, egress)
+                append_entry(
+                    agent_id=req.agent_id,
+                    session_id=req.session_id,
+                    tool_name=req.tool_name,
+                    decision="outcome",
+                    reason_code="completed",
+                    risk_score=risk_score,
+                    policy_version=policy_version,
+                    evidence_hashes=[],
+                    payload={"request_id": request_id, "log_only": True},
+                )
+                response = ExecuteResponse(
+                    request_id=request_id,
+                    decision=decision,
+                    reason_code=reason_code,
+                    risk_score=risk_score,
+                    policy_version=policy_version,
+                    result=outcome,
+                )
+                if req.idempotency_key:
+                    IDEMPOTENCY_CACHE[req.idempotency_key] = response.model_dump()
+                return response
+            except Exception as exc:
+                reason = "partial_transmission" if "timeout" in str(exc).lower() or "connect" in str(exc).lower() else "execution_error"
+                append_entry(
+                    agent_id=req.agent_id,
+                    session_id=req.session_id,
+                    tool_name=req.tool_name,
+                    decision="outcome_unknown",
+                    reason_code=reason,
+                    risk_score=risk_score,
+                    policy_version=policy_version,
+                    evidence_hashes=[],
+                    payload={"request_id": request_id, "error": str(exc), "log_only": True},
+                )
+                return ExecuteResponse(
+                    request_id=request_id,
+                    decision=decision,
+                    reason_code=reason_code,
+                    risk_score=risk_score,
+                    policy_version=policy_version,
+                    result=None,
+                )
         response = ExecuteResponse(
             request_id=request_id,
             decision=decision,
             reason_code=reason_code,
             risk_score=risk_score,
             policy_version=policy_version,
+            result=None,
         )
         if req.idempotency_key:
             IDEMPOTENCY_CACHE[req.idempotency_key] = response.model_dump()
         return response
 
     if decision == "require_approval":
-        # Phase 1: no approval workflow yet; treat as pending block-ish? 
-        # Return require_approval decision to caller.
+        if mode == "log_only":
+            try:
+                outcome = await execute_tool(req.tool_name, req.arguments, egress)
+                append_entry(
+                    agent_id=req.agent_id,
+                    session_id=req.session_id,
+                    tool_name=req.tool_name,
+                    decision="outcome",
+                    reason_code="completed",
+                    risk_score=risk_score,
+                    policy_version=policy_version,
+                    evidence_hashes=[],
+                    payload={"request_id": request_id, "log_only": True},
+                )
+                response = ExecuteResponse(
+                    request_id=request_id,
+                    decision=decision,
+                    reason_code=reason_code,
+                    risk_score=risk_score,
+                    policy_version=policy_version,
+                    result=outcome,
+                )
+                if req.idempotency_key:
+                    IDEMPOTENCY_CACHE[req.idempotency_key] = response.model_dump()
+                return response
+            except Exception:
+                pass
         response = ExecuteResponse(
             request_id=request_id,
             decision=decision,
             reason_code=reason_code,
             risk_score=risk_score,
             policy_version=policy_version,
+            result=None,
         )
         if req.idempotency_key:
             IDEMPOTENCY_CACHE[req.idempotency_key] = response.model_dump()
@@ -218,6 +291,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
         reason_code=reason_code,
         risk_score=risk_score,
         policy_version=policy_version,
+        result=outcome,
     )
     if req.idempotency_key:
         IDEMPOTENCY_CACHE[req.idempotency_key] = response.model_dump()
