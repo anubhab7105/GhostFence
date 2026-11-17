@@ -80,6 +80,47 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
 
     request_id = str(uuid.uuid4())
 
+    # Outbound payload scanning and classification checks for egress tools.
+    tool = registry.get(req.tool_name)
+    if tool is not None and tool.egress:
+        dest_host = None
+        if req.tool_name in {"http_request", "fetch_document"}:
+            from ..policy_engine.normalization import normalize_url
+            try:
+                dest_host = normalize_url(req.arguments.get("url", ""))["host"]
+            except Exception:
+                dest_host = None
+        elif req.tool_name == "send_email":
+            to = req.arguments.get("to", "")
+            if "@" in to:
+                dest_host = to.split("@", 1)[1]
+        if dest_host is not None:
+            from ..core.settings import settings
+            allowed_hosts = {d.host for d in app_state["destinations"].destinations}
+            scan = scan_outbound(
+                __import__("json").dumps(req.arguments, sort_keys=True),
+                dest_host,
+                allowed_hosts,
+                sensitive_markers=[],
+            )
+            if not scan["ok"]:
+                decision = "block"
+                reason_code = scan["reason"]
+                risk_score = max(risk_score, 60)
+            # classification high-water check
+            sens = get_sensitivity_high_water(req.session_id)
+            dest_entry = None
+            for d in app_state["destinations"].destinations:
+                if d.host == dest_host or d.host in dest_host:
+                    dest_entry = d
+                    break
+            if dest_entry is not None:
+                order = {"public": 0, "internal": 1, "confidential": 2, "restricted": 3}
+                if order.get(sens, 0) > order.get(dest_entry.approved_up_to.value if hasattr(dest_entry.approved_up_to, "value") else str(dest_entry.approved_up_to), 0):
+                    decision = "block"
+                    reason_code = "sensitivity_exceeds_destination"
+                    risk_score = max(risk_score, 70)
+
     # Write-ahead audit entry before execution.
     append_entry(
         agent_id=req.agent_id,
@@ -128,6 +169,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
     try:
         outcome = await execute_tool(req.tool_name, req.arguments, egress)
     except Exception as exc:
+        reason = "partial_transmission" if "timeout" in str(exc).lower() or "connect" in str(exc).lower() else "execution_error"
         append_entry(
             agent_id=req.agent_id,
             session_id=req.session_id,
