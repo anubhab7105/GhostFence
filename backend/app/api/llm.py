@@ -11,7 +11,7 @@ router = APIRouter(prefix="/v1", tags=["llm"])
 
 @router.post("/llm")
 def llm_adapter(payload: dict, role: str = Depends(api_key_role), token: dict = Depends(run_token_payload)):
-    from ..app.main import app_state
+    from ..main import app_state
 
     prompt = payload.get("prompt", "")
     classification = payload.get("classification", "public")
