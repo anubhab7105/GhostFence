@@ -57,12 +57,12 @@ def test_allow_with_flag_matrix():
     # Monkeypatch policy engine to return allow with risk > 0.
     original_evaluate = app_state["policy_engine"].evaluate
     app_state["policy_engine"].evaluate = lambda **kwargs: {"decision": "allow", "reason_code": "allowed", "risk_score": 50, "matched_rules": []}
-    # Monkeypatch registry tool to be egress.
-    original_get = app_state["registry"].get
+    from types import SimpleNamespace
+    original_registry = app_state["registry"]
     class Tool:
         egress = True
         side_effect = True
-    app_state["registry"].get = lambda name: Tool()
+    app_state["registry"] = SimpleNamespace(get=lambda name: Tool())
     try:
         run = create_run("invoice-agent", "matrix", {"mode": "enforce"})
         token_payload = verify_run_token(run["run_token"])
@@ -77,4 +77,4 @@ def test_allow_with_flag_matrix():
         assert resp.decision.value == "require_approval"
     finally:
         app_state["policy_engine"].evaluate = original_evaluate
-        app_state["registry"].get = original_get
+        app_state["registry"] = original_registry
