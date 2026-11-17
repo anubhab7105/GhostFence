@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from ..api.deps import api_key_role, run_token_payload
 from ..core.settings import settings
-from ..policy_engine.normalization import SENSITIVITY_ORDER if False else None
+
 
 router = APIRouter(prefix="/v1", tags=["llm"])
 

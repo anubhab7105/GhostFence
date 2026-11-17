@@ -3,7 +3,7 @@
 from fastapi import APIRouter, Depends
 
 from ..api.deps import api_key_role
-from ..app.main import app_state
+from ..main import app_state
 
 router = APIRouter(prefix="/v1/policies", tags=["policies"])
 
