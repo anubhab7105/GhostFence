@@ -49,7 +49,7 @@ def test_modification_detected():
     append_entry(agent_id="a", session_id="s", tool_name="read_file", decision="allow", reason_code="allowed", risk_score=0, policy_version="1.0")
     append_entry(agent_id="a", session_id="s", tool_name="read_file", decision="allow", reason_code="allowed", risk_score=0, policy_version="1.0")
     with session_scope() as session:
-        session.execute(text("UPDATE audit_entries SET reason_code = 'tampered' WHERE sequence = 2"))
+        session.execute(text("UPDATE audit_entries SET payload = jsonb_set(payload, '{reason_code}', '\"tampered\"') WHERE sequence = 2"))
     result = verify_chain()
     assert result["ok"] is False
     assert result["first_bad_sequence"] == 2
@@ -117,7 +117,7 @@ def test_verify_after_restore():
     with session_scope() as session:
         for row in rows:
             session.execute(
-                text("INSERT INTO audit_entries (sequence, timestamp, agent_id, session_id, tool_name, decision, reason_code, risk_score, policy_version, previous_hash, entry_hash, payload) VALUES (:sequence, :timestamp, :agent_id, :session_id, :tool_name, :decision, :reason_code, :risk_score, :policy_version, :previous_hash, :entry_hash, :payload)"),
+                text("INSERT INTO audit_entries (sequence, timestamp, agent_id, session_id, tool_name, decision, reason_code, risk_score, policy_version, previous_hash, entry_hash, payload) VALUES (:sequence, :timestamp, :agent_id, :session_id, :tool_name, :decision, :reason_code, :risk_score, :policy_version, :previous_hash, :entry_hash, CAST(:payload AS jsonb))"),
                 {
                     "sequence": row["sequence"],
                     "timestamp": row["timestamp"],
@@ -149,5 +149,6 @@ def test_gateway_role_privileges():
                 conn.commit()
                 assert False, f"gateway allowed: {sql}"
             except Exception as e:
-                assert "permission denied" in str(e).lower() or "permission" in str(e).lower()
+                conn.rollback()
+                assert "permission" in str(e).lower()
     engine.dispose()
