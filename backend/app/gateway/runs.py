@@ -109,7 +109,6 @@ def get_sensitivity_high_water(session_id: str) -> str:
 
 
 def update_sensitivity_high_water(session_id: str, classification: str):
-    from .normalization import _sensitivity_rank if False else None
     order = {"public": 0, "internal": 1, "confidential": 2, "restricted": 3}
     current = get_sensitivity_high_water(session_id)
     if order.get(classification, 0) > order.get(current, 0):
