@@ -114,7 +114,7 @@ class PolicyEngine:
         if tool.egress and dest_host is not None:
             pass
 
-        return {"decision": "allow", "reason_code": "allowed", "risk_score": 0, "matched_rules": matched + ["allowed"]}
+        return {"decision": "allow", "reason_code": "allowed", "risk_score": min(100, inspector_contrib), "matched_rules": matched + ["allowed"]}
 
     def _resource_allowed(self, path: str, pattern: str) -> bool:
         from .normalization import glob_match

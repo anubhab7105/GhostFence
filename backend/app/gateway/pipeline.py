@@ -58,6 +58,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
         tool_name=req.tool_name,
         arguments=req.arguments,
         session_tainted=session_tainted,
+        inspector_severity=0,
     )
     decision = result["decision"]
     reason_code = result["reason_code"]
