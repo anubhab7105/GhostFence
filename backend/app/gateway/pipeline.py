@@ -79,7 +79,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
         policy_version=policy_version,
         evidence_hashes=[evidence_hash(json.dumps(req.arguments, sort_keys=True))],
         redacted_excerpt=None,
-        payload={"request_id": request_id, "matched_rules": matched, "provenance": req.provenance},
+        payload={"request_id": request_id, "matched_rules": matched, "provenance": req.provenance, "risk_formula_version": "risk-v1", "risk_signals": matched},
     )
 
     if decision in {"block"}:
