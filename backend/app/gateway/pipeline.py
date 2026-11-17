@@ -10,7 +10,8 @@ from ..audit.service import append_entry, evidence_hash
 from ..core.settings import settings
 from ..gateway.egress import EgressClient
 from ..gateway.executor import execute_tool
-from ..gateway.runs import get_inspector_severity, get_run, increment_denial, is_tainted, set_tainted
+from ..data_protection.scanner import scan_outbound
+from ..gateway.runs import get_inspector_severity, get_run, increment_denial, is_tainted, set_tainted, get_sensitivity_high_water
 from ..schemas.api import ExecuteRequest, ExecuteResponse
 from ..schemas.common import Decision
 
