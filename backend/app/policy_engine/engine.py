@@ -46,7 +46,8 @@ class PolicyEngine:
                 return True
         return False
 
-    def evaluate(self, *, tool_name: str, arguments: dict, session_tainted: bool) -> dict:
+    def evaluate(self, *, tool_name: str, arguments: dict, session_tainted: bool, inspector_severity: int = 0) -> dict:
+        inspector_contrib = min(40, inspector_severity * 4 // 10)
         matched = []
         # 3. policy check
         tool = self.registry.get(tool_name)
