@@ -168,8 +168,8 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
                     request_id=request_id,
                     decision=decision,
                     reason_code=reason_code,
-                    risk_score=risk_score,
-                    policy_version=policy_version,
+                    risk_score=None,
+                    policy_version=None,
                     result=outcome,
                 )
                 if req.idempotency_key:
@@ -192,8 +192,8 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
                     request_id=request_id,
                     decision=decision,
                     reason_code=reason_code,
-                    risk_score=risk_score,
-                    policy_version=policy_version,
+                    risk_score=None,
+                    policy_version=None,
                     result=None,
                 )
         response = ExecuteResponse(
