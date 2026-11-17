@@ -8,7 +8,7 @@ from urllib.parse import urlunsplit
 import httpx
 
 from ..core.settings import settings
-from ..policy_engine.normalization import ip_is_blocked, normalize_domain
+from ..policy_engine.normalization import ip_is_blocked, is_ip_literal, normalize_domain
 
 
 class EgressBlocked(Exception):
@@ -27,7 +27,7 @@ class EgressClient:
         if host in self.demo_hosts and self.demo_allow:
             # Demo-only allow rule: still resolve and pin, but do not block these exact hosts.
             pass
-        if ip_is_blocked(host) and host not in self.demo_hosts:
+        if is_ip_literal(host) and ip_is_blocked(host) and host not in self.demo_hosts:
             # IP literal blocked unless demo host (demo hosts are names, not IPs)
             raise EgressBlocked(f"blocked address: {host}")
         try:
