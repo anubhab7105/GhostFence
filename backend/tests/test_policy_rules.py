@@ -51,6 +51,7 @@ def test_unknown_resource_restricted():
     assert c.classify("anything") == Sensitivity.restricted
 
 
+@pytest.mark.docker
 def test_allow_with_flag_matrix():
     ensure_app_state()
     # Monkeypatch policy engine to return allow with risk > 0.
