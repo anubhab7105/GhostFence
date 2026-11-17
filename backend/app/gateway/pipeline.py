@@ -21,6 +21,16 @@ IDEMPOTENCY_CACHE: dict[str, dict] = {}
 
 async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
     run = get_run(token["run_id"])
+    mode = "enforce"
+    if run is not None:
+        scope = run.get("scope")
+        if isinstance(scope, str):
+            try:
+                scope = __import__("json").loads(scope)
+            except Exception:
+                scope = {}
+        if isinstance(scope, dict):
+            mode = scope.get("mode", "enforce")
     if run is None or run["status"] != "active":
         return _deny(req, token, "invalid_session", 0, run)
     if int(run["expires_at"]) < time.time():
