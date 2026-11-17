@@ -10,6 +10,7 @@ from fastapi import Depends, FastAPI, Header, HTTPException
 from .api.deps import run_token_payload
 from .core.security import role_for_api_key
 from .api.inspect import router as inspect_router
+from .api.llm import router as llm_router
 from .api.runs import router as runs_router
 from .audit.recovery import recover_pending_outcomes
 from .audit.service import append_entry, verify_chain
@@ -61,6 +62,7 @@ def health():
 
 app.include_router(runs_router)
 app.include_router(inspect_router)
+app.include_router(llm_router)
 
 
 @app.post("/v1/execute")

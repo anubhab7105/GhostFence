@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     run_ttl_seconds: int = 1800
     denial_threshold: int = 5
     demo_allow_evil_test: bool = True
+    anthropic_model: str = Field(default="claude-sonnet-4-5", validation_alias=AliasChoices("GHOSTFENCE_ANTHROPIC_MODEL", "ANTHROPIC_MODEL"))
 
 
 settings = Settings()
