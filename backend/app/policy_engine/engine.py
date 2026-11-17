@@ -84,12 +84,12 @@ class PolicyEngine:
         if tool_name in self.policy.approval_required:
             # taint can escalate but approval remains
             if session_tainted and tool_name in SENSITIVE_TOOLS:
-                return {"decision": "require_approval", "reason_code": "approval_required_tainted", "risk_score": 40, "matched_rules": matched + ["approval_required", "tainted"]}
-            return {"decision": "require_approval", "reason_code": "approval_required", "risk_score": 10, "matched_rules": matched + ["approval_required"]}
+                return {"decision": "require_approval", "reason_code": "approval_required_tainted", "risk_score": min(100, 40 + inspector_contrib), "matched_rules": matched + ["approval_required", "tainted"]}
+            return {"decision": "require_approval", "reason_code": "approval_required", "risk_score": min(100, 10 + inspector_contrib), "matched_rules": matched + ["approval_required"]}
 
         # 4. taint check
         if session_tainted and tool_name in SENSITIVE_TOOLS:
-            return {"decision": "block", "reason_code": "tainted_sensitive_tool", "risk_score": 50, "matched_rules": matched + ["tainted"]}
+            return {"decision": "block", "reason_code": "tainted_sensitive_tool", "risk_score": min(100, 50 + inspector_contrib), "matched_rules": matched + ["tainted"]}
 
         # 5. data and destination check
         dest_host = None
