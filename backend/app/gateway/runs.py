@@ -88,6 +88,24 @@ def is_tainted(session_id: str) -> bool:
         return bool(row)
 
 
+def get_sensitivity_high_water(session_id: str) -> str:
+    with get_session() as session:
+        row = session.execute(text("SELECT sensitivity_high_water FROM sessions WHERE id = :id"), {"id": session_id}).scalar()
+        return row or "public"
+
+
+def update_sensitivity_high_water(session_id: str, classification: str):
+    from .normalization import _sensitivity_rank if False else None
+    order = {"public": 0, "internal": 1, "confidential": 2, "restricted": 3}
+    current = get_sensitivity_high_water(session_id)
+    if order.get(classification, 0) > order.get(current, 0):
+        with session_scope() as session:
+            session.execute(
+                text("UPDATE sessions SET sensitivity_high_water = :c WHERE id = :id"),
+                {"c": classification, "id": session_id},
+            )
+
+
 def set_tainted(session_id: str, tainted: bool = True, sources: list | None = None):
     with session_scope() as session:
         session.execute(
