@@ -58,7 +58,7 @@ app.include_router(inspect_router)
 
 
 @app.post("/v1/execute")
-async def execute_endpoint(req: "ExecuteRequest", token: dict = Depends(run_token_payload)):
+async def execute_endpoint(req: ExecuteRequest, token: dict = Depends(run_token_payload)):
     from .schemas.api import ExecuteRequest
 
     return await execute_request(req, token)
