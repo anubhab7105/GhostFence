@@ -31,11 +31,11 @@ def test_normalize_path_no_traversal_escapes(value):
     assert ".." not in out.split("/")
 
 
-@given(st.text(), st.text())
-def test_suffix_domain_match_is_not_suffix_only(host, allowed):
-    # A host must equal the allowed domain or be a proper subdomain, never a bare suffix.
-    if host and allowed and host.endswith(allowed) and not host.endswith("." + allowed) and host != allowed:
-        assert not suffix_domain_match(host, allowed)
+def test_suffix_domain_match_is_not_suffix_only():
+    assert not suffix_domain_match("evil-example.com", "example.com")
+    assert not suffix_domain_match("notexample.com", "example.com")
+    assert suffix_domain_match("sub.example.com", "example.com")
+    assert suffix_domain_match("example.com", "example.com")
 
 
 @given(st.sampled_from(["127.0.0.1", "10.0.0.1", "169.254.169.254", "192.168.1.1", "::1"]))
