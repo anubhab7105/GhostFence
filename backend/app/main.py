@@ -9,6 +9,7 @@ from fastapi import Depends, FastAPI, Header, HTTPException
 
 from .api.deps import run_token_payload
 from .core.security import role_for_api_key
+from .api.attacks import router as attacks_router
 from .api.inspect import router as inspect_router
 from .api.llm import router as llm_router
 from .api.runs import router as runs_router
@@ -60,6 +61,7 @@ def health():
     return {"status": "ok", "service": "ghostfence", "db": db_ok}
 
 
+app.include_router(attacks_router)
 app.include_router(runs_router)
 app.include_router(inspect_router)
 app.include_router(llm_router)
