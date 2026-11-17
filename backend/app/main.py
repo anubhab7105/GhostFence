@@ -10,6 +10,7 @@ from fastapi import Depends, FastAPI, Header, HTTPException
 from .api.deps import run_token_payload
 from .api.inspect import router as inspect_router
 from .api.runs import router as runs_router
+from .audit.recovery import recover_pending_outcomes
 from .audit.service import append_entry, verify_chain
 from .core.db import ping
 from .core.settings import settings
@@ -37,6 +38,10 @@ async def lifespan(app: FastAPI):
     app_state["resources"] = resources
     app_state["destinations"] = destinations
     app_state["egress"] = EgressClient()
+    try:
+        recover_pending_outcomes()
+    except Exception:
+        pass
     yield
 
 
