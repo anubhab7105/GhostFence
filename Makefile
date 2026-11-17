@@ -12,6 +12,9 @@ test:
 reliability:
 	cd backend && python -m app.reliability.run --runs 20
 
+reliability-live:
+	cd backend && python -m app.reliability.live
+
 bench:
 	cd backend && python -m app.bench.run
 
