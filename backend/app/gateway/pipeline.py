@@ -34,7 +34,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
         cached = IDEMPOTENCY_CACHE[req.idempotency_key]
         return ExecuteResponse(**cached)
 
-    from ..app.main import app_state
+    from ..main import app_state
 
     registry = app_state["registry"]
     policy_engine = app_state["policy_engine"]
