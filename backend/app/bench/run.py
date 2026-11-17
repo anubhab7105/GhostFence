@@ -5,6 +5,7 @@ import asyncio
 import statistics
 import time
 
+from ..attack_lab.runner import ensure_app_state
 from ..core.security import verify_run_token
 from ..gateway.pipeline import execute_request
 from ..gateway.runs import create_run
@@ -12,6 +13,7 @@ from ..schemas.api import ExecuteRequest
 
 
 async def main_async(iterations: int, out: str):
+    ensure_app_state()
     run = create_run("invoice-agent", "bench", {"mode": "enforce"})
     token_payload = verify_run_token(run["run_token"])
     session_id = run["session_id"]
