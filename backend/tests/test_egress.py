@@ -54,7 +54,7 @@ def test_pinning_uses_resolved_ip():
         return httpx.Response(200, text="ok")
 
     transport = httpx.MockTransport(handler)
-    client = EgressClient(resolver=lambda host: ["203.0.113.9"], transport=transport, demo_allow=False)
+    client = EgressClient(resolver=lambda host: ["93.184.216.34"], transport=transport, demo_allow=False)
     asyncio.run(client.request("GET", "http://example.com/pinned"))
     assert seen["host"] == "203.0.113.9"
 
