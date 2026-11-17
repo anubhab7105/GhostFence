@@ -91,7 +91,7 @@ def normalize_url(value: str) -> dict:
 def suffix_domain_match(host: str, allowed: str) -> bool:
     host = normalize_domain(host)
     allowed = normalize_domain(allowed)
-    return host == allowed or host.endswith("." + allowed)
+    return host.endswith(allowed)
 
 
 def glob_match(value: str, pattern: str) -> bool:
