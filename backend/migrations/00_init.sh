@@ -52,13 +52,15 @@ INSERT INTO audit_chain_head (id, last_sequence, last_hash)
 VALUES (1, 0, decode('4febf9bd83efbb0c82bbe8cef0eb8aa3d69224b0f0086675fc198f32c1c396de', 'hex'))
 ON CONFLICT (id) DO NOTHING;
 
-GRANT SELECT, INSERT ON audit_entries, audit_chain_head TO ${GATEWAY_DB_USER};
+GRANT SELECT, INSERT ON audit_entries TO ${GATEWAY_DB_USER};
+GRANT SELECT, INSERT, UPDATE ON audit_chain_head TO ${GATEWAY_DB_USER};
 GRANT SELECT, INSERT, UPDATE, DELETE ON agents, policies, sessions, tool_calls, decisions, approvals, content_inspections, attack_runs TO ${GATEWAY_DB_USER};
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO ${GATEWAY_DB_USER};
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON audit_entries, audit_chain_head, agents, policies, sessions, tool_calls, decisions, approvals, content_inspections, attack_runs, checkpoints TO ${TAMPER_ADMIN_DB_USER};
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO ${TAMPER_ADMIN_DB_USER};
 
+GRANT SELECT ON audit_entries, audit_chain_head TO ${CHECKPOINTER_DB_USER};
 GRANT SELECT, INSERT ON checkpoints TO ${CHECKPOINTER_DB_USER};
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO ${CHECKPOINTER_DB_USER};
 SQL
