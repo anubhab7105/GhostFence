@@ -353,6 +353,6 @@ def _deny(req, token, reason_code, risk_score, run):
         request_id=request_id,
         decision="block",
         reason_code=reason_code,
-        risk_score=risk_score,
-        policy_version="unknown",
+        risk_score=None,
+        policy_version=None,
     )
