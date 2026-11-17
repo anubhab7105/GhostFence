@@ -17,3 +17,6 @@ bench:
 
 verify:
 	cd backend && python -m app.audit.verify_cli
+
+isolation-check:
+	docker compose exec agent /scripts/isolation-check.sh
