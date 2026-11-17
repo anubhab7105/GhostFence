@@ -107,6 +107,9 @@ def tamper_demo(sequence: int, new_reason: str, x_api_key: str | None = Header(d
 
     if x_api_key is None or role_for_api_key(x_api_key) != "admin":
         raise HTTPException(status_code=403, detail="admin required")
+    from .core.settings import settings
+    if not settings.demo_mode:
+        raise HTTPException(status_code=404, detail="demo mode disabled")
     url = os.getenv("TAMPER_ADMIN_DATABASE_URL")
     if not url:
         raise HTTPException(status_code=404, detail="tamper admin not configured")
