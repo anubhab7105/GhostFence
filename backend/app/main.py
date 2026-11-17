@@ -8,6 +8,7 @@ import yaml
 from fastapi import Depends, FastAPI, Header, HTTPException
 
 from .api.deps import run_token_payload
+from .core.security import role_for_api_key
 from .api.inspect import router as inspect_router
 from .api.runs import router as runs_router
 from .audit.recovery import recover_pending_outcomes
@@ -77,3 +78,20 @@ def audit_list():
 @app.post("/v1/audit/verify")
 def audit_verify():
     return verify_chain()
+
+
+@app.post("/v1/audit/tamper-demo")
+def tamper_demo(sequence: int, new_reason: str, x_api_key: str | None = Header(default=None)):
+    import os
+    from sqlalchemy import create_engine, text
+
+    if x_api_key is None or role_for_api_key(x_api_key) != "admin":
+        raise HTTPException(status_code=403, detail="admin required")
+    url = os.getenv("TAMPER_ADMIN_DATABASE_URL")
+    if not url:
+        raise HTTPException(status_code=404, detail="tamper admin not configured")
+    engine = create_engine(url)
+    with engine.begin() as conn:
+        conn.execute(text("UPDATE audit_entries SET reason_code = :r WHERE sequence = :s"), {"r": new_reason, "s": sequence})
+    engine.dispose()
+    return {"tampered": True, "sequence": sequence}
