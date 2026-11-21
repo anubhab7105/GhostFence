@@ -18,7 +18,7 @@ class EgressBlocked(Exception):
 
 
 class EgressClient:
-    def __init__(self, resolver: Callable[[str], list[str]] | None = None, transport=None, demo_allow: bool | None = None):
+    def __init__(self, resolver: Callable[[str], list[str]] | None = None, transport=None, demo_allow: bool | None = None, allowed_hosts: set[str] | None = None):
         env_map = os.getenv("GHOSTFENCE_EGRESS_RESOLVER_JSON")
         if resolver is None and env_map:
             import json as _json
@@ -32,6 +32,7 @@ class EgressClient:
         self.transport = transport
         self.demo_allow = settings.demo_allow_evil_test if demo_allow is None else demo_allow
         self.demo_hosts = {"evil.test", "reports.internal.test", "reports.internal.test.evil.test"}
+        self.allowed_hosts = allowed_hosts or set()
 
     def _validate_host(self, host: str) -> list[str]:
         host = normalize_domain(host)
