@@ -12,7 +12,6 @@ from fastapi.responses import StreamingResponse
 
 from .api.deps import run_token_payload
 from .core.security import role_for_api_key
-from .api.approvals import router as approvals_router
 from .api.attacks import router as attacks_router
 from .api.inspect import router as inspect_router
 from .api.llm import router as llm_router
