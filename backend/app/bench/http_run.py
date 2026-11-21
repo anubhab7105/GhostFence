@@ -30,7 +30,7 @@ async def main_async(iterations, concurrency, out):
     env.setdefault("AUDIT_HMAC_KEY", "change-me-audit-hmac-key")
 
     server_cmd = [sys.executable, "-m", "uvicorn", "app.main:app", "--host", "127.0.0.1", "--port", "8124"]
-    proc = subprocess.Popen(server_cmd, cwd=str(BACKEND), env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    proc = subprocess.Popen(server_cmd, cwd=str(BACKEND), env=env, stdout=open("/tmp/httpbench.log","w"), stderr=subprocess.STDOUT)
     # wait health
     deadline = time.time() + 30
     while time.time() < deadline:
