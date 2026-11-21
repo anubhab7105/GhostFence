@@ -37,6 +37,18 @@ def benign_policy():
 
 def test_benign_suite():
     with TestClient(app) as client:
+        from app.policy_engine.loaders import load_destinations, load_policy, load_registry, load_resources
+        from app.policy_engine.engine import PolicyEngine
+        reg = load_registry("/home/babai/Desktop/codeing/GhostFence/tool-registry.yaml")
+        pol = load_policy("/home/babai/Desktop/codeing/GhostFence/policies/benign.yaml")
+        res = load_resources("/home/babai/Desktop/codeing/GhostFence/resources.yaml")
+        dst = load_destinations("/home/babai/Desktop/codeing/GhostFence/destinations.yaml")
+        engine = PolicyEngine(pol, reg, res, dst)
+        engine.validate_startup()
+        app_state["policy_engine"] = engine
+        app_state["registry"] = reg
+        app_state["resources"] = res
+        app_state["destinations"] = dst
         api_key = os.getenv("AGENT_API_KEY", os.getenv("GHOSTFENCE_AGENT_API_KEY", "dev-agent-key"))
         suite = yaml.safe_load(open("/home/babai/Desktop/codeing/GhostFence/attack-lab/benign-suite.yaml"))
         tasks = suite["tasks"]
