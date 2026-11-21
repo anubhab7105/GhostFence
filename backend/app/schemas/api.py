@@ -25,6 +25,8 @@ class ExecuteResponse(BaseModel):
     policy_version: str | None = None
     approval_id: str | None = None
     result: dict | None = None
+    audit_lock_wait_ms: float | None = None
+    audit_lock_hold_ms: float | None = None
 
 
 class InspectRequest(BaseModel):

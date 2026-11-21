@@ -3,11 +3,12 @@
 import hashlib
 import hmac
 import json
+import time
 from datetime import datetime, timezone
 
 from sqlalchemy import text
 
-from ..core.db import get_session, session_scope
+from ..core.db import engine, get_session, session_scope
 from ..core.settings import settings
 
 
@@ -45,10 +46,14 @@ def append_entry(
 ) -> dict:
     timestamp = timestamp or datetime.now(timezone.utc)
     ts = timestamp.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    with session_scope() as session:
+    from sqlalchemy.orm import Session
+    session = Session(engine, future=True)
+    try:
+        t0 = time.perf_counter()
         row = session.execute(
             text("SELECT last_sequence, encode(last_hash, 'hex') AS last_hash FROM audit_chain_head WHERE id = 1 FOR UPDATE")
         ).mappings().first()
+        t1 = time.perf_counter()
         if row is None:
             raise RuntimeError("audit chain head missing")
         previous_hash = row["last_hash"]
@@ -98,7 +103,20 @@ def append_entry(
             text("UPDATE audit_chain_head SET last_sequence = :seq, last_hash = decode(:hash, 'hex'), updated_at = now() WHERE id = 1"),
             {"seq": sequence, "hash": entry_hash},
         )
-        return {"sequence": sequence, "entry_hash": entry_hash, "previous_hash": previous_hash}
+        session.commit()
+        t2 = time.perf_counter()
+        return {
+            "sequence": sequence,
+            "entry_hash": entry_hash,
+            "previous_hash": previous_hash,
+            "lock_wait_ms": (t1 - t0) * 1000.0,
+            "lock_hold_ms": (t2 - t1) * 1000.0,
+        }
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()
 
 
 def verify_chain() -> dict:
@@ -113,7 +131,6 @@ def verify_chain() -> dict:
             payload = row["payload"]
             if isinstance(payload, str):
                 payload = json.loads(payload)
-            # ensure timestamp consistency? payload already has timestamp
             recomputed = compute_entry_hash(row["previous_hash"], payload)
             if recomputed != row["entry_hash"]:
                 return {"ok": False, "first_bad_sequence": row["sequence"], "reason": "entry_hash mismatch"}
