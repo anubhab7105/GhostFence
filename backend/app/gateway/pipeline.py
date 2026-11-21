@@ -233,7 +233,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
                     risk_score=risk_score,
                     policy_version=policy_version,
                     result=outcome,
-                    approval_id=approval_id,
+                    approval_id=None,
                 )
                 if req.idempotency_key:
                     IDEMPOTENCY_CACHE[req.idempotency_key] = response.model_dump()
@@ -247,7 +247,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
             risk_score=None,
             policy_version=None,
             result=None,
-            approval_id=approval_id,
+            approval_id=None,
         )
         if req.idempotency_key:
             IDEMPOTENCY_CACHE[req.idempotency_key] = response.model_dump()
