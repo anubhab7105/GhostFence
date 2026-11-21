@@ -20,9 +20,9 @@ VENDOR_DIR = ROOT / "mocks" / "vendor-site"
 GATEWAY_PORT = 8124
 SINK_PORT = 8090
 VENDOR_PORT = 8091
-SINK_URL = f"http://127.0.0.1:{SINK_PORT}"
+SINK_URL = f"http://evil.test:{SINK_PORT}"
 GATEWAY_URL = f"http://127.0.0.1:{GATEWAY_PORT}"
-VENDOR_URL = f"http://127.0.0.1:{VENDOR_PORT}"
+VENDOR_URL = f"http://evil.test:{VENDOR_PORT}"
 
 API_KEY = os.getenv("AGENT_API_KEY", os.getenv("GHOSTFENCE_AGENT_API_KEY", "dev-agent-key"))
 ADMIN_KEY = os.getenv("ADMIN_API_KEY", os.getenv("GHOSTFENCE_ADMIN_API_KEY", "dev-admin-key"))
@@ -155,6 +155,7 @@ async def main_async(runs, out):
     env.setdefault("AUDIT_HMAC_KEY", "change-me-audit-hmac-key")
     env.setdefault("SINK_URL", SINK_URL)
     env.setdefault("VENDOR_SITE_URL", VENDOR_URL)
+    env.setdefault("GHOSTFENCE_EGRESS_RESOLVER_JSON", '{"evil.test": ["127.0.0.1"]}')
     env.setdefault("DEMO_ALLOW_EVIL_TEST", "true")
 
     procs = start_processes(env)
