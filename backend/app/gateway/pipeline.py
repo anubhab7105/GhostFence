@@ -344,7 +344,7 @@ async def _block(req, token, run, reason_code, risk_score, policy_version):
 def _deny(req, token, reason_code, risk_score, run):
     # sync deny (no await needed) but append audit
     request_id = str(__import__("uuid").uuid4())
-    await _append(
+    append_entry(
         agent_id=req.agent_id,
         session_id=req.session_id,
         tool_name=req.tool_name,
