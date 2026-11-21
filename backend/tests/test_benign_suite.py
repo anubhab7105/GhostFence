@@ -78,5 +78,7 @@ def test_benign_suite():
                     if data["reason_code"] == "tainted_sensitive_tool":
                         trifecta_fps += 1
         fp_rate = len(false_positives) / total if total else 0
+        from collections import Counter
+        print("reasons:", Counter(x["reason"] for x in false_positives))
         print(f"benign suite size={len(tasks)} steps={total} false_positives={len(false_positives)} fp_rate={fp_rate} trifecta_fps={trifecta_fps}")
         assert fp_rate < 0.05, false_positives
