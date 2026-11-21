@@ -136,7 +136,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
                     risk_score = max(risk_score, 70)
 
     # Write-ahead audit entry before execution.
-    await _append(
+    audit_result = await _append(
         agent_id=req.agent_id,
         session_id=req.session_id,
         tool_name=req.tool_name,
@@ -148,6 +148,8 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
         redacted_excerpt=None,
         payload={"request_id": request_id, "matched_rules": matched, "provenance": req.provenance, "risk_formula_version": "risk-v1", "risk_signals": matched},
     )
+    lock_wait_ms = audit_result.get("lock_wait_ms")
+    lock_hold_ms = audit_result.get("lock_hold_ms")
 
     if decision in {"block"}:
         count = await asyncio.to_thread(increment_denial, run["id"])
