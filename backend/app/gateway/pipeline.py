@@ -1,5 +1,6 @@
 """Decision pipeline (PRD section 8)."""
 
+import asyncio
 import json
 import time
 import uuid
@@ -21,7 +22,7 @@ IDEMPOTENCY_CACHE: dict[str, dict] = {}
 
 
 async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
-    run = get_run(token["run_id"])
+    run = await asyncio.to_thread(get_run, token["run_id"])
     mode = "enforce"
     if run is not None:
         scope = run.get("scope")
@@ -63,8 +64,8 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
         except ValidationError:
             return await _block(req, token, run, "schema_validation_failed", 0, policy_engine.version)
 
-    session_tainted = is_tainted(req.session_id)
-    inspector_severity = get_inspector_severity(req.session_id)
+    session_tainted = await asyncio.to_thread(is_tainted, req.session_id)
+    inspector_severity = await asyncio.to_thread(get_inspector_severity, req.session_id)
 
     # 3-6 policy evaluation
     result = policy_engine.evaluate(
