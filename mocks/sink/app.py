@@ -22,3 +22,9 @@ async def capture(path: str, request: Request):
 @app.get("/requests")
 def requests():
     return REQUESTS
+
+
+@app.post("/reset")
+def reset():
+    REQUESTS.clear()
+    return {"reset": True}
