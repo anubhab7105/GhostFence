@@ -30,13 +30,20 @@ def test_require_approval_maps_to_block():
         run = run_resp.json()
         token = run["run_token"]
         sid = run["session_id"]
-        resp = client.post("/v1/execute", headers={"X-Run-Token": token}, json={
-            "agent_id": "invoice-agent",
-            "session_id": sid,
-            "task": "t",
-            "tool_name": "delete_record",
-            "arguments": {"record_id": "1"},
-        })
+        # Force a require_approval policy result to test mapping.
+        from app.main import app_state
+        original = app_state["policy_engine"].evaluate
+        app_state["policy_engine"].evaluate = lambda **kwargs: {"decision": "require_approval", "reason_code": "approval_required", "risk_score": 0, "matched_rules": []}
+        try:
+            resp = client.post("/v1/execute", headers={"X-Run-Token": token}, json={
+                "agent_id": "invoice-agent",
+                "session_id": sid,
+                "task": "t",
+                "tool_name": "read_file",
+                "arguments": {"path": "invoices/invoice-1.pdf"},
+            })
+        finally:
+            app_state["policy_engine"].evaluate = original
         assert resp.status_code == 200
         assert resp.json()["decision"] == "block"
         assert resp.json()["reason_code"] == "approval_required"

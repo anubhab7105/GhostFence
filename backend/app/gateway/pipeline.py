@@ -211,7 +211,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
     if decision == "require_approval":
         # Approvals are disabled (deferred): map to block, reason recorded.
         decision = "block"
-        reason_code = result["reason_code"]
+        # keep the already-determined reason_code (e.g. approval_required or risk_escalation_outbound)
         if mode == "log_only":
             try:
                 outcome = await execute_tool(req.tool_name, req.arguments, egress)
