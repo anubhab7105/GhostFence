@@ -45,8 +45,8 @@ def start_processes(env):
     sink = subprocess.Popen([sys.executable, "-m", "uvicorn", "app:app", "--host", "127.0.0.1", "--port", str(SINK_PORT)], cwd=str(SINK_DIR), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     vendor = subprocess.Popen([sys.executable, "-m", "uvicorn", "app:app", "--host", "127.0.0.1", "--port", str(VENDOR_PORT)], cwd=str(VENDOR_DIR), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     gateway = subprocess.Popen([sys.executable, "-m", "uvicorn", "app.main:app", "--host", "127.0.0.1", "--port", str(GATEWAY_PORT)], cwd=str(BACKEND), env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    wait_health(SINK_URL)
-    wait_health(VENDOR_URL)
+    wait_health("http://127.0.0.1:8090")
+    wait_health("http://127.0.0.1:8091")
     wait_health(GATEWAY_URL)
     return sink, vendor, gateway
 
