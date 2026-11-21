@@ -1,6 +1,7 @@
 import os
 import yaml
 
+import httpx
 import pytest
 from fastapi.testclient import TestClient
 

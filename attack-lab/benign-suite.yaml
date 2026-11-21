@@ -6,19 +6,19 @@ tasks:
   - id: b02
     steps:
       - tool: fetch_document
-        args: { url: "http://vendor-site/documents/a" }
+        args: { url: "http://vendor-site:8080/documents/a" }
   - id: b03
     steps:
       - tool: read_file
         args: { path: invoices/invoice-1.pdf }
       - tool: http_request
-        args: { url: "http://reports.internal.test/report", method: "POST" }
+        args: { url: "http://reports.internal.test:8080/report", method: "POST" }
   - id: b04
     steps:
       - tool: fetch_document
-        args: { url: "http://vendor-site/documents/a" }
+        args: { url: "http://vendor-site:8080/documents/a" }
       - tool: http_request
-        args: { url: "http://reports.internal.test/report", method: "POST" }
+        args: { url: "http://reports.internal.test:8080/report", method: "POST" }
   - id: b05
     steps:
       - tool: read_file
@@ -30,7 +30,7 @@ tasks:
   - id: b07
     steps:
       - tool: fetch_document
-        args: { url: "http://vendor-site/documents/a" }
+        args: { url: "http://vendor-site:8080/documents/a" }
   - id: b08
     steps:
       - tool: read_file
@@ -38,13 +38,13 @@ tasks:
   - id: b09
     steps:
       - tool: fetch_document
-        args: { url: "http://vendor-site/documents/a" }
+        args: { url: "http://vendor-site:8080/documents/a" }
   - id: b10
     steps:
       - tool: read_file
         args: { path: invoices/invoice-1.pdf }
       - tool: http_request
-        args: { url: "http://reports.internal.test/report", method: "POST" }
+        args: { url: "http://reports.internal.test:8080/report", method: "POST" }
   - id: b11
     steps:
       - tool: read_file
@@ -52,7 +52,7 @@ tasks:
   - id: b12
     steps:
       - tool: fetch_document
-        args: { url: "http://vendor-site/documents/a" }
+        args: { url: "http://vendor-site:8080/documents/a" }
   - id: b13
     steps:
       - tool: read_file
@@ -60,17 +60,17 @@ tasks:
   - id: b14
     steps:
       - tool: fetch_document
-        args: { url: "http://vendor-site/documents/a" }
+        args: { url: "http://vendor-site:8080/documents/a" }
   - id: b15
     steps:
       - tool: read_file
         args: { path: invoices/invoice-1.pdf }
       - tool: http_request
-        args: { url: "http://reports.internal.test/report", method: "POST" }
+        args: { url: "http://reports.internal.test:8080/report", method: "POST" }
   - id: b16
     steps:
       - tool: fetch_document
-        args: { url: "http://vendor-site/documents/a" }
+        args: { url: "http://vendor-site:8080/documents/a" }
   - id: b17
     steps:
       - tool: read_file
@@ -78,7 +78,7 @@ tasks:
   - id: b18
     steps:
       - tool: fetch_document
-        args: { url: "http://vendor-site/documents/a" }
+        args: { url: "http://vendor-site:8080/documents/a" }
   - id: b19
     steps:
       - tool: read_file
@@ -86,17 +86,17 @@ tasks:
   - id: b20
     steps:
       - tool: fetch_document
-        args: { url: "http://vendor-site/documents/a" }
+        args: { url: "http://vendor-site:8080/documents/a" }
   - id: b21
     steps:
       - tool: read_file
         args: { path: invoices/invoice-1.pdf }
       - tool: http_request
-        args: { url: "http://reports.internal.test/report", method: "POST" }
+        args: { url: "http://reports.internal.test:8080/report", method: "POST" }
   - id: b22
     steps:
       - tool: fetch_document
-        args: { url: "http://vendor-site/documents/a" }
+        args: { url: "http://vendor-site:8080/documents/a" }
   - id: b23
     steps:
       - tool: read_file
@@ -104,7 +104,7 @@ tasks:
   - id: b24
     steps:
       - tool: fetch_document
-        args: { url: "http://vendor-site/documents/a" }
+        args: { url: "http://vendor-site:8080/documents/a" }
   - id: b25
     steps:
       - tool: read_file
@@ -112,17 +112,17 @@ tasks:
   - id: b26
     steps:
       - tool: fetch_document
-        args: { url: "http://vendor-site/documents/a" }
+        args: { url: "http://vendor-site:8080/documents/a" }
   - id: b27
     steps:
       - tool: read_file
         args: { path: invoices/invoice-1.pdf }
       - tool: http_request
-        args: { url: "http://reports.internal.test/report", method: "POST" }
+        args: { url: "http://reports.internal.test:8080/report", method: "POST" }
   - id: b28
     steps:
       - tool: fetch_document
-        args: { url: "http://vendor-site/documents/a" }
+        args: { url: "http://vendor-site:8080/documents/a" }
   - id: b29
     steps:
       - tool: read_file
@@ -130,7 +130,7 @@ tasks:
   - id: b30
     steps:
       - tool: fetch_document
-        args: { url: "http://vendor-site/documents/a" }
+        args: { url: "http://vendor-site:8080/documents/a" }
   - id: b31
     steps:
       - tool: read_file
@@ -138,4 +138,4 @@ tasks:
   - id: b32
     steps:
       - tool: fetch_document
-        args: { url: "http://vendor-site/documents/a" }
+        args: { url: "http://vendor-site:8080/documents/a" }
