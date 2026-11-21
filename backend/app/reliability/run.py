@@ -161,7 +161,7 @@ async def main_async(runs, out):
     env.setdefault("AUDIT_HMAC_KEY", "change-me-audit-hmac-key")
     env.setdefault("SINK_URL", SINK_URL)
     env.setdefault("VENDOR_SITE_URL", VENDOR_URL)
-    env.setdefault("GHOSTFENCE_EGRESS_RESOLVER_JSON", '{"evil.test": ["127.0.0.1"]}')
+    env.setdefault("GHOSTFENCE_EGRESS_RESOLVER_JSON", '{"evil.test": ["127.0.0.1"], "reports.internal.test": ["127.0.0.1"], "reports.internal.test.evil.test": ["127.0.0.1"]}')
     env.setdefault("DEMO_ALLOW_EVIL_TEST", "true")
 
     procs = start_processes(env)
