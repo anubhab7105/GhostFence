@@ -194,7 +194,7 @@ async def main_async(runs, out):
                         raise RuntimeError("positive control failed: unprotected S3 did not leak on all channels")
                     if mode == "protected" and any(o["sink_exposed_requests"] > 0 for o in outcomes):
                         raise RuntimeError("positive control failed: protected S3 reached sink")
-                results.append({"scenario": scenario, "mode": mode, "runs": runs, "outcomes": outcomes})
+                results.append({"scenario": scenario, "mode": mode, "runs": runs, "canary_result": canary, "outcomes": outcomes})
         payload = {
             "agent_type": "scripted-stub",
             "model_version": "scripted-agent (no live LLM)",
