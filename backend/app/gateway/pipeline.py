@@ -194,7 +194,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
                     reason_code=reason_code,
                     risk_score=None,
                     policy_version=None,
-                    result=None,
+                    result={"error": str(exc)},
                 )
         response = ExecuteResponse(
             request_id=request_id,
