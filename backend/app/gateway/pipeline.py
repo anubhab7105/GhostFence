@@ -23,6 +23,7 @@ IDEMPOTENCY_CACHE: dict[str, dict] = {}
 async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
     run = get_run(token["run_id"])
     mode = "enforce"
+    print("DEBUG mode run scope:", run.get("scope") if run else None)
     if run is not None:
         scope = run.get("scope")
         if isinstance(scope, str):
