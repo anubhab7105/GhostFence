@@ -75,7 +75,8 @@ def test_allow_with_flag_matrix():
             arguments={"url": "https://example.com/"},
         )
         resp = asyncio.run(execute_request(req, token_payload))
-        assert resp.decision.value == "require_approval"
+        assert resp.decision.value == "block"
+        assert resp.reason_code == "risk_escalation_outbound"
     finally:
         app_state["policy_engine"].evaluate = original_evaluate
         app_state["registry"] = original_registry
