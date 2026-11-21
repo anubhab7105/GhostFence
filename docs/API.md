@@ -11,8 +11,6 @@ Endpoints:
 - POST /v1/execute
 - POST /v1/inspect
 - GET /v1/policies
-- GET /v1/approvals
-- POST /v1/approvals/{id}/decide
 - GET /v1/audit
 - POST /v1/audit/verify
 - POST /v1/audit/tamper-demo (demo mode only)

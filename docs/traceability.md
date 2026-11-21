@@ -71,7 +71,7 @@
 | FR-65 | Done | backend/app/gateway/egress.py | test_egress |
 | FR-66 | Partial | backend/app/gateway/pipeline.py partial_transmission | (manual) |
 | FR-67 | Deferred | backend/app/api/approvals.py | (manual) |
-| FR-68 | Not done | HMAC-bound approvals not implemented | - |
+| FR-68 | Deferred | HMAC-bound approvals not implemented | - |
 | FR-69 | Done | backend/app/audit/recovery.py | test_audit |
 | FR-70 | Done | docs/runbook.md | (doc) |
 | FR-71 | Partial | scripts/backup.sh, restore.sh | test_restore_script |
