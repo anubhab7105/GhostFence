@@ -62,12 +62,12 @@ def stop_processes(procs):
 
 
 def reset_sink():
-    httpx.post(f"{SINK_URL}/reset", timeout=5)
+    httpx.post("http://127.0.0.1:8090/reset", timeout=5)
 
 
 def canary_check():
-    httpx.post(f"{SINK_URL}/canary", timeout=5)
-    r = httpx.get(f"{SINK_URL}/requests", timeout=5)
+    httpx.post("http://127.0.0.1:8090/canary", timeout=5)
+    r = httpx.get("http://127.0.0.1:8090/requests", timeout=5)
     reqs = r.json()
     if not any(x.get("path") == "/canary" for x in reqs):
         raise RuntimeError("sink canary not observed")
