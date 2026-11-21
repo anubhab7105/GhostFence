@@ -29,13 +29,13 @@
 | FR-23 | Not done | - | - |
 | FR-24 | Not done | - | - |
 | FR-25 | Done | backend/app/gateway/runs.py update_sensitivity_high_water | (manual) |
-| FR-26 | Partial | backend/app/api/approvals.py | (manual) |
-| FR-27 | Partial | backend/app/api/approvals.py decide | (manual) |
+| FR-26 | Deferred | backend/app/api/approvals.py | (manual) |
+| FR-27 | Deferred | backend/app/api/approvals.py decide | (manual) |
 | FR-28 | Done | backend/app/policy_engine/engine.py taint check | test_policy_rules |
 | FR-29 | Done | backend/app/audit/service.py append_entry | test_audit |
 | FR-30 | Done | backend/app/attack_lab/runner.py cross_check | test_cross_check |
-| FR-31 | Partial | backend/app/api/approvals.py | (manual) |
-| FR-32 | Partial | backend/app/api/approvals.py | (manual) |
+| FR-31 | Deferred | backend/app/api/approvals.py | (manual) |
+| FR-32 | Deferred | backend/app/api/approvals.py | (manual) |
 | FR-33 | Done | backend/app/audit/service.py redacted_excerpt | test_audit |
 | FR-34 | Done | attack-lab/sample_data | (manual) |
 | FR-35 | Done | attack-lab/scenarios | (manual) |
@@ -70,7 +70,7 @@
 | FR-64 | Done | backend/app/gateway/pipeline.py allow_with_flag matrix | test_policy_rules |
 | FR-65 | Done | backend/app/gateway/egress.py | test_egress |
 | FR-66 | Partial | backend/app/gateway/pipeline.py partial_transmission | (manual) |
-| FR-67 | Partial | backend/app/api/approvals.py | (manual) |
+| FR-67 | Deferred | backend/app/api/approvals.py | (manual) |
 | FR-68 | Not done | HMAC-bound approvals not implemented | - |
 | FR-69 | Done | backend/app/audit/recovery.py | test_audit |
 | FR-70 | Done | docs/runbook.md | (doc) |
