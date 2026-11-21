@@ -44,7 +44,7 @@ async def lifespan(app: FastAPI):
     app_state["policy_engine"] = engine
     app_state["resources"] = resources
     app_state["destinations"] = destinations
-    app_state["egress"] = EgressClient()
+    app_state["egress"] = EgressClient(allowed_hosts={d.host for d in destinations.destinations})
     try:
         recover_pending_outcomes()
     except Exception:

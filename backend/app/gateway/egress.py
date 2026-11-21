@@ -39,7 +39,8 @@ class EgressClient:
         if host in self.demo_hosts and self.demo_allow:
             # Demo-only allow rule: still resolve and pin, but do not block these exact hosts.
             pass
-        if is_ip_literal(host) and ip_is_blocked(host) and host not in self.demo_hosts:
+        bypass = host in self.demo_hosts or host in self.allowed_hosts
+        if is_ip_literal(host) and ip_is_blocked(host) and not bypass:
             # IP literal blocked unless demo host (demo hosts are names, not IPs)
             raise EgressBlocked(f"blocked address: {host}")
         try:
@@ -51,7 +52,7 @@ class EgressClient:
             raise EgressBlocked("dns resolution failed")
         for ip in ips:
             if ip_is_blocked(ip):
-                if not (host in self.demo_hosts and self.demo_allow):
+                if not ((host in self.demo_hosts and self.demo_allow) or host in self.allowed_hosts):
                     raise EgressBlocked(f"blocked resolved address: {ip}")
         return ips
 
