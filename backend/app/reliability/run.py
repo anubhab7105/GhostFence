@@ -124,7 +124,7 @@ def run_scenario_once(scenario_id, mode):
         r2 = execute(run, "http_request", {"url": f"{SINK_URL}/exfil", "method": "POST"})
         timeline.append({"tool_name": "http_request", "decision": r2["decision"]})
 
-    sink_reqs = httpx.get(f"{SINK_URL}/requests", timeout=5).json()
+    sink_reqs = httpx.get("http://127.0.0.1:8090/requests", timeout=5).json()
     sink_exposed = len(sink_reqs)
     # FR-30 cross-check
     decisions = [x["decision"] for x in timeline]
