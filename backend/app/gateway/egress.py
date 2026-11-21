@@ -1,6 +1,8 @@
 """Egress HTTP client with DNS pinning and address validation (FR-21, Phase 1)."""
 
 import ipaddress
+import json
+import os
 import socket
 from typing import Callable
 from urllib.parse import urlunsplit
@@ -17,6 +19,11 @@ class EgressBlocked(Exception):
 
 class EgressClient:
     def __init__(self, resolver: Callable[[str], list[str]] | None = None, transport=None, demo_allow: bool | None = None):
+        env_map = os.getenv("GHOSTFENCE_EGRESS_RESOLVER_JSON")
+        if resolver is None and env_map:
+            import json as _json
+            mapping = _json.loads(env_map)
+            resolver = lambda host: mapping.get(host, [r[4][0] for r in socket.getaddrinfo(host, None)])
         self.resolver = resolver or (lambda host: [r[4][0] for r in socket.getaddrinfo(host, None)])
         self.transport = transport
         self.demo_allow = settings.demo_allow_evil_test if demo_allow is None else demo_allow
