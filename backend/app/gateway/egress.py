@@ -23,7 +23,11 @@ class EgressClient:
         if resolver is None and env_map:
             import json as _json
             mapping = _json.loads(env_map)
-            resolver = lambda host: mapping.get(host, [r[4][0] for r in socket.getaddrinfo(host, None)])
+            def _resolver(host):
+                if host in mapping:
+                    return mapping[host]
+                return [r[4][0] for r in socket.getaddrinfo(host, None)]
+            resolver = _resolver
         self.resolver = resolver or (lambda host: [r[4][0] for r in socket.getaddrinfo(host, None)])
         self.transport = transport
         self.demo_allow = settings.demo_allow_evil_test if demo_allow is None else demo_allow
