@@ -5,6 +5,11 @@ destinations:
     training: false
     demo_only: true
     notes: "Demo sink only."
+  - host: reports.internal.test
+    approved_up_to: internal
+    retention: "30 days"
+    training: false
+    notes: "Benign reporting endpoint."
   - host: vendor-site
     approved_up_to: internal
     retention: none

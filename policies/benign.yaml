@@ -1,0 +1,17 @@
+policy_id: benign-agent
+version: "1.0"
+agent_id: invoice-agent
+default_decision: block
+allowed_tools:
+  - read_file
+  - fetch_document
+  - http_request
+allowed_resources:
+  - invoices/*
+  - docs/*
+allowed_operations:
+  - read
+allowed_destinations:
+  - reports.internal.test
+sensitivity_ceiling: confidential
+approval_required: []
