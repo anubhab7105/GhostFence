@@ -75,7 +75,7 @@ def canary_check():
 
 
 def create_run(mode):
-    r = httpx.post(f"{GATEWAY_URL}/v1/runs", headers={"X-API-Key": API_KEY}, json={"agent_id": "invoice-agent", "task": "reliability", "mode": mode}, timeout=10)
+    r = httpx.post(f"{GATEWAY_URL}/v1/runs", headers={"X-API-Key": ADMIN_KEY}, json={"agent_id": "invoice-agent", "task": "reliability", "mode": mode}, timeout=10)
     r.raise_for_status()
     return r.json()
 
