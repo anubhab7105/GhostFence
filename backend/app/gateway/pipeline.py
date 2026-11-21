@@ -209,15 +209,9 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
         return response
 
     if decision == "require_approval":
-        import uuid as _uuid
-        from ..core.db import session_scope
-        from sqlalchemy import text as _text
-        approval_id = str(_uuid.uuid4())
-        with session_scope() as _s:
-            _s.execute(
-                _text("INSERT INTO approvals (id, tool_call_id, status) VALUES (:id, :tc, 'pending')"),
-                {"id": approval_id, "tc": request_id},
-            )
+        # Approvals are disabled (deferred): map to block, reason recorded.
+        decision = "block"
+        reason_code = result["reason_code"]
         if mode == "log_only":
             try:
                 outcome = await execute_tool(req.tool_name, req.arguments, egress)
