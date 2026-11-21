@@ -22,11 +22,8 @@ async def execute_tool(tool_name: str, arguments: dict, egress) -> dict:
 
     if tool_name == "fetch_document":
         url = arguments.get("url", "")
-        try:
-            response = await egress.request("GET", url)
-            return {"status_code": response.status_code, "content": response.text, "url": url}
-        except Exception as e:
-            return {"error": repr(e), "url": url}
+        response = await egress.request("GET", url)
+        return {"status_code": response.status_code, "content": response.text}
 
     if tool_name == "http_request":
         method = arguments.get("method", "GET")
