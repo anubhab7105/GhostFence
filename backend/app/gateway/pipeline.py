@@ -309,6 +309,8 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
         risk_score=risk_score,
         policy_version=policy_version,
         result=outcome,
+        audit_lock_wait_ms=lock_wait_ms,
+        audit_lock_hold_ms=lock_hold_ms,
     )
     if req.idempotency_key:
         IDEMPOTENCY_CACHE[req.idempotency_key] = response.model_dump()
