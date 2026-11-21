@@ -77,7 +77,7 @@ def test_benign_suite():
                 assert resp.status_code == 200
                 data = resp.json()
                 if data["decision"] == "block":
-                    false_positives.append({"task": task["id"], "tool": step["tool"], "reason": data["reason_code"]})
+                    false_positives.append({"task": task["id"], "tool": step["tool"], "reason": data["reason_code"], "result": data.get("result")})
                     if data["reason_code"] == "tainted_sensitive_tool":
                         trifecta_fps += 1
         fp_rate = len(false_positives) / total if total else 0
