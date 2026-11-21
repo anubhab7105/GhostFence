@@ -122,7 +122,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
                 reason_code = scan["reason"]
                 risk_score = max(risk_score, 60)
             # classification high-water check
-            sens = get_sensitivity_high_water(req.session_id)
+            sens = await asyncio.to_thread(get_sensitivity_high_water, req.session_id)
             dest_entry = None
             for d in app_state["destinations"].destinations:
                 if d.host == dest_host or d.host in dest_host:
@@ -136,7 +136,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
                     risk_score = max(risk_score, 70)
 
     # Write-ahead audit entry before execution.
-    _append(
+    await _append(
         agent_id=req.agent_id,
         session_id=req.session_id,
         tool_name=req.tool_name,
@@ -150,14 +150,14 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
     )
 
     if decision in {"block"}:
-        count = increment_denial(run["id"])
+        count = await asyncio.to_thread(increment_denial, run["id"])
         if count >= settings.denial_threshold:
             pass
         # log_only mode records the would-be decision but executes (D3).
         if mode == "log_only":
             try:
                 outcome = await execute_tool(req.tool_name, req.arguments, egress)
-                _append(
+                await _append(
                     agent_id=req.agent_id,
                     session_id=req.session_id,
                     tool_name=req.tool_name,
@@ -181,7 +181,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
                 return response
             except Exception as exc:
                 reason = "partial_transmission" if "timeout" in str(exc).lower() or "connect" in str(exc).lower() else "execution_error"
-                _append(
+                await _append(
                     agent_id=req.agent_id,
                     session_id=req.session_id,
                     tool_name=req.tool_name,
@@ -219,7 +219,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
         if mode == "log_only":
             try:
                 outcome = await execute_tool(req.tool_name, req.arguments, egress)
-                _append(
+                await _append(
                     agent_id=req.agent_id,
                     session_id=req.session_id,
                     tool_name=req.tool_name,
@@ -262,7 +262,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
         outcome = await execute_tool(req.tool_name, req.arguments, egress)
     except Exception as exc:
         reason = "partial_transmission" if "timeout" in str(exc).lower() or "connect" in str(exc).lower() else "execution_error"
-        _append(
+        await _append(
             agent_id=req.agent_id,
             session_id=req.session_id,
             tool_name=req.tool_name,
@@ -282,7 +282,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
         )
 
     # Write the separate outcome entry after execution (write-ahead audit).
-    _append(
+    await _append(
         agent_id=req.agent_id,
         session_id=req.session_id,
         tool_name=req.tool_name,
@@ -309,7 +309,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
 
 async def _block(req, token, run, reason_code, risk_score, policy_version):
     request_id = str(__import__("uuid").uuid4())
-    _append(
+    await _append(
         agent_id=req.agent_id,
         session_id=req.session_id,
         tool_name=req.tool_name,
@@ -334,7 +334,7 @@ async def _block(req, token, run, reason_code, risk_score, policy_version):
 def _deny(req, token, reason_code, risk_score, run):
     # sync deny (no await needed) but append audit
     request_id = str(__import__("uuid").uuid4())
-    _append(
+    await _append(
         agent_id=req.agent_id,
         session_id=req.session_id,
         tool_name=req.tool_name,
