@@ -126,9 +126,9 @@ def run_scenario_once(scenario_id, mode):
 
     sink_reqs = httpx.get("http://127.0.0.1:8090/requests", timeout=5).json()
     sink_exposed = len(sink_reqs)
-    # FR-30 cross-check
+    # FR-30 cross-check (protected mode only; log_only intentionally executes would-be blocks)
     decisions = [x["decision"] for x in timeline]
-    if sink_exposed > 0 and not any(d in {"allow", "allow_with_flag"} for d in decisions):
+    if mode == "protected" and sink_exposed > 0 and not any(d in {"allow", "allow_with_flag"} for d in decisions):
         raise RuntimeError("FR-30 mismatch: sink saw traffic but no allow decision")
     if sink_exposed == 0 and any(d in {"allow", "allow_with_flag"} for d in decisions) and mode == "protected":
         # allow that did not reach sink is okay (e.g., read_file)
