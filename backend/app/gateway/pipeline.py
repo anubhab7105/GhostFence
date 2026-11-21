@@ -8,6 +8,9 @@ import uuid
 from jsonschema import ValidationError, validate as jsonschema_validate
 
 from ..audit.service import append_entry, evidence_hash
+
+async def _append(*args, **kwargs):
+    return await asyncio.to_thread(append_entry, *args, **kwargs)
 from ..core.settings import settings
 from ..core.settings import settings
 from ..gateway.egress import EgressClient
@@ -133,7 +136,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
                     risk_score = max(risk_score, 70)
 
     # Write-ahead audit entry before execution.
-    append_entry(
+    _append(
         agent_id=req.agent_id,
         session_id=req.session_id,
         tool_name=req.tool_name,
@@ -154,7 +157,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
         if mode == "log_only":
             try:
                 outcome = await execute_tool(req.tool_name, req.arguments, egress)
-                append_entry(
+                _append(
                     agent_id=req.agent_id,
                     session_id=req.session_id,
                     tool_name=req.tool_name,
@@ -178,7 +181,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
                 return response
             except Exception as exc:
                 reason = "partial_transmission" if "timeout" in str(exc).lower() or "connect" in str(exc).lower() else "execution_error"
-                append_entry(
+                _append(
                     agent_id=req.agent_id,
                     session_id=req.session_id,
                     tool_name=req.tool_name,
@@ -216,7 +219,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
         if mode == "log_only":
             try:
                 outcome = await execute_tool(req.tool_name, req.arguments, egress)
-                append_entry(
+                _append(
                     agent_id=req.agent_id,
                     session_id=req.session_id,
                     tool_name=req.tool_name,
@@ -259,7 +262,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
         outcome = await execute_tool(req.tool_name, req.arguments, egress)
     except Exception as exc:
         reason = "partial_transmission" if "timeout" in str(exc).lower() or "connect" in str(exc).lower() else "execution_error"
-        append_entry(
+        _append(
             agent_id=req.agent_id,
             session_id=req.session_id,
             tool_name=req.tool_name,
@@ -279,7 +282,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
         )
 
     # Write the separate outcome entry after execution (write-ahead audit).
-    append_entry(
+    _append(
         agent_id=req.agent_id,
         session_id=req.session_id,
         tool_name=req.tool_name,
@@ -306,7 +309,7 @@ async def execute_request(req: ExecuteRequest, token: dict) -> ExecuteResponse:
 
 async def _block(req, token, run, reason_code, risk_score, policy_version):
     request_id = str(__import__("uuid").uuid4())
-    append_entry(
+    _append(
         agent_id=req.agent_id,
         session_id=req.session_id,
         tool_name=req.tool_name,
@@ -331,7 +334,7 @@ async def _block(req, token, run, reason_code, risk_score, policy_version):
 def _deny(req, token, reason_code, risk_score, run):
     # sync deny (no await needed) but append audit
     request_id = str(__import__("uuid").uuid4())
-    append_entry(
+    _append(
         agent_id=req.agent_id,
         session_id=req.session_id,
         tool_name=req.tool_name,
