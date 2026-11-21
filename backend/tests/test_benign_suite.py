@@ -50,6 +50,8 @@ def test_benign_suite():
         app_state["registry"] = reg
         app_state["resources"] = res
         app_state["destinations"] = dst
+        from app.gateway.egress import EgressClient
+        app_state["egress"] = EgressClient(transport=httpx.MockTransport(lambda r: httpx.Response(200, text="ok")), demo_allow=True)
         api_key = os.getenv("AGENT_API_KEY", os.getenv("GHOSTFENCE_AGENT_API_KEY", "dev-agent-key"))
         suite = yaml.safe_load(open("/home/babai/Desktop/codeing/GhostFence/attack-lab/benign-suite.yaml"))
         tasks = suite["tasks"]
