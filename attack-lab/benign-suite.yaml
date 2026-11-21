@@ -1,0 +1,141 @@
+tasks:
+  - id: b01
+    steps:
+      - tool: read_file
+        args: { path: invoices/invoice-1.pdf }
+  - id: b02
+    steps:
+      - tool: fetch_document
+        args: { url: "http://vendor-site/documents/a" }
+  - id: b03
+    steps:
+      - tool: read_file
+        args: { path: invoices/invoice-1.pdf }
+      - tool: http_request
+        args: { url: "http://reports.internal.test/report", method: "POST" }
+  - id: b04
+    steps:
+      - tool: fetch_document
+        args: { url: "http://vendor-site/documents/a" }
+      - tool: http_request
+        args: { url: "http://reports.internal.test/report", method: "POST" }
+  - id: b05
+    steps:
+      - tool: read_file
+        args: { path: invoices/invoice-1.pdf }
+  - id: b06
+    steps:
+      - tool: read_file
+        args: { path: invoices/invoice-1.pdf }
+  - id: b07
+    steps:
+      - tool: fetch_document
+        args: { url: "http://vendor-site/documents/a" }
+  - id: b08
+    steps:
+      - tool: read_file
+        args: { path: invoices/invoice-1.pdf }
+  - id: b09
+    steps:
+      - tool: fetch_document
+        args: { url: "http://vendor-site/documents/a" }
+  - id: b10
+    steps:
+      - tool: read_file
+        args: { path: invoices/invoice-1.pdf }
+      - tool: http_request
+        args: { url: "http://reports.internal.test/report", method: "POST" }
+  - id: b11
+    steps:
+      - tool: read_file
+        args: { path: invoices/invoice-1.pdf }
+  - id: b12
+    steps:
+      - tool: fetch_document
+        args: { url: "http://vendor-site/documents/a" }
+  - id: b13
+    steps:
+      - tool: read_file
+        args: { path: invoices/invoice-1.pdf }
+  - id: b14
+    steps:
+      - tool: fetch_document
+        args: { url: "http://vendor-site/documents/a" }
+  - id: b15
+    steps:
+      - tool: read_file
+        args: { path: invoices/invoice-1.pdf }
+      - tool: http_request
+        args: { url: "http://reports.internal.test/report", method: "POST" }
+  - id: b16
+    steps:
+      - tool: fetch_document
+        args: { url: "http://vendor-site/documents/a" }
+  - id: b17
+    steps:
+      - tool: read_file
+        args: { path: invoices/invoice-1.pdf }
+  - id: b18
+    steps:
+      - tool: fetch_document
+        args: { url: "http://vendor-site/documents/a" }
+  - id: b19
+    steps:
+      - tool: read_file
+        args: { path: invoices/invoice-1.pdf }
+  - id: b20
+    steps:
+      - tool: fetch_document
+        args: { url: "http://vendor-site/documents/a" }
+  - id: b21
+    steps:
+      - tool: read_file
+        args: { path: invoices/invoice-1.pdf }
+      - tool: http_request
+        args: { url: "http://reports.internal.test/report", method: "POST" }
+  - id: b22
+    steps:
+      - tool: fetch_document
+        args: { url: "http://vendor-site/documents/a" }
+  - id: b23
+    steps:
+      - tool: read_file
+        args: { path: invoices/invoice-1.pdf }
+  - id: b24
+    steps:
+      - tool: fetch_document
+        args: { url: "http://vendor-site/documents/a" }
+  - id: b25
+    steps:
+      - tool: read_file
+        args: { path: invoices/invoice-1.pdf }
+  - id: b26
+    steps:
+      - tool: fetch_document
+        args: { url: "http://vendor-site/documents/a" }
+  - id: b27
+    steps:
+      - tool: read_file
+        args: { path: invoices/invoice-1.pdf }
+      - tool: http_request
+        args: { url: "http://reports.internal.test/report", method: "POST" }
+  - id: b28
+    steps:
+      - tool: fetch_document
+        args: { url: "http://vendor-site/documents/a" }
+  - id: b29
+    steps:
+      - tool: read_file
+        args: { path: invoices/invoice-1.pdf }
+  - id: b30
+    steps:
+      - tool: fetch_document
+        args: { url: "http://vendor-site/documents/a" }
+  - id: b31
+    steps:
+      - tool: read_file
+        args: { path: invoices/invoice-1.pdf }
+  - id: b32
+    steps:
+      - tool: fetch_document
+        args: { url: "http://vendor-site/documents/a" }
