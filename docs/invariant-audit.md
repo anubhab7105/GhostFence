@@ -1,15 +1,11 @@
 # Invariant Audit
 
-a. Agent container env/code: `docker-compose.yml` agent service env only `GHOSTFENCE_GATEWAY_URL` and `GHOSTFENCE_AGENT_API_KEY`; no provider key or tool credentials. `sdk/python/ghostfence` contains no secrets.
-
-b. Agent-facing denials: `backend/app/gateway/pipeline.py` returns `ExecuteResponse` with `response_model_exclude_none=True` (`backend/app/main.py`); block responses set `risk_score`, `policy_version`, `result`, `approval_id` to `None`, so only `request_id`, `decision`, `reason_code` are serialized.
-
-c. Enforcement mode: `backend/app/api/runs.py` `create_run_endpoint` allows `mode` only when role is admin/approver; agents are forced to `enforce`.
-
-d. No floats in audit payloads: `backend/app/audit/service.py` `append_entry` uses integer `risk_score` and RFC3339 string timestamps; tests scan for floats.
-
-e. Dashboard: `frontend/app/*.tsx` uses `JSON.stringify` in `<pre>`, no `dangerouslySetInnerHTML`.
-
-f. No raw sensitive content/arguments in audit: `backend/app/audit/service.py` stores `evidence_hashes` (HMAC) and redacted excerpts; raw arguments are not persisted (only matched rules/provenance).
-
-g. Tamper demo: `backend/app/main.py` `/v1/audit/tamper-demo` requires `settings.demo_mode` (default false) and `TAMPER_ADMIN_DATABASE_URL`; compose gateway env does not include tamper admin credentials.
+| Item | Pass/Fail | File:line references |
+|---|---|---|
+| a Agent has no provider/tool/operator keys | Pass | docker-compose.yml agent service env; sdk/python/ghostfence contains no secrets |
+| b Denial bodies only decision/reason/request ID | Pass | backend/app/main.py:75 (response_model_exclude_none=True); backend/app/gateway/pipeline.py block responses set optional fields to None |
+| c Enforcement mode operator-only | Pass | backend/app/api/runs.py:16 |
+| d No floats in audit payloads | Pass | backend/app/audit/service.py append_entry uses int risk_score and string timestamps |
+| e Dashboard no raw HTML/markdown | Pass | frontend/app/*.tsx use JSON.stringify in pre |
+| f No raw sensitive content/arguments | Pass | backend/app/audit/service.py evidence_hash/redacted_excerpt; pipeline payload excludes raw arguments |
+| g Tamper demo disabled unless DEMO_MODE | Pass | backend/app/core/settings.py:23; backend/app/main.py:109; docker-compose.yml gateway env has no tamper admin creds |
