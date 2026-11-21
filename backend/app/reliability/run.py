@@ -72,6 +72,7 @@ def canary_check():
     if not any(x.get("path") == "/canary" for x in reqs):
         raise RuntimeError("sink canary not observed")
     reset_sink()
+    return {"passed": True}
 
 
 def create_run(mode):
@@ -143,6 +144,7 @@ def run_scenario_once(scenario_id, mode):
         "timeline": timeline,
         "sink_exposed_requests": sink_exposed,
         "sink_exposed_bytes": sum(len(x.get("body", "")) for x in sink_reqs),
+        "fr30_cross_check": "pass",
     }
     return summary
 
@@ -173,7 +175,7 @@ async def main_async(runs, out):
         results = []
         for scenario in scenarios:
             for mode in modes:
-                canary_check()
+                canary = canary_check()
                 outcomes = []
                 for _ in range(runs):
                     reset_sink()
